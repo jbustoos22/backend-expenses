@@ -14,13 +14,24 @@ app.get('/expenses', async (req, res) => {
     res.status(500).json({ error: 'Error al consultar la base de datos' });
   }
 });
+
+app.get('/categories', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM categories');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error al consultar la base de datos:', err);
+    res.status(500).json({ error: 'Error al consultar la base de datos' });
+  }
+});
+
 // Ruta para crear un nuevo gasto
 app.post('/expenses', async (req, res) => {
   const { description, amount } = req.body;
 
   try {
     const result = await pool.query(
-      'INSERT INTO public.expenses (description, amount) VALUES ($1, $2) RETURNING *',
+'INSERT INTO public.expenses (description, amount) VALUES ($1, $2) RETURNING *',
       [description, amount]
     );
     res.status(201).json(result.rows[0]);
