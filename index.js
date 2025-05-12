@@ -1,14 +1,16 @@
 const express = require('express');
+const cors = require('cors'); // Add this line
 const pool = require('./db');
 const app = express();
 
+app.use(cors()); // Add this line
 app.use(express.json());
 
 // Ruta de prueba para obtener usuarios
 app.get('/expenses', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM public.expenses');
-    res.json(result.rows);
+    res.json({ expenses: result.rows });
   } catch (err) {
     console.error('Error al consultar la base de datos:', err);
     res.status(500).json({ error: 'Error al consultar la base de datos' });
@@ -18,7 +20,7 @@ app.get('/expenses', async (req, res) => {
 app.get('/categories', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM categories');
-    res.json(result.rows);
+    res.json({ categories: result.rows });
   } catch (err) {
     console.error('Error al consultar la base de datos:', err);
     res.status(500).json({ error: 'Error al consultar la base de datos' });
@@ -44,7 +46,7 @@ app.get('/', async (req, res) => {
     res.send('Bienvenido a la API de gastos');
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
